@@ -1,34 +1,32 @@
 
 <template>
-<!--   <div id="app">
-    <AppNavbar/>
-    <Notification/>
-  </div> -->
+  <!-- <div id="app"> -->
+    <!-- <AppNavbar/> -->
+    <!-- <Notification/> -->
+  <!-- </div> -->
 
   <v-ons-splitter>
-    <v-ons-splitter-side swipeable width="150px" collapse="" side="left" :open.sync="openSide">
-      <v-ons-page>
-        <v-ons-list>
-          <v-ons-list-item v-for="page in pages" tappable modifier="chevron" @click="currentPage = page; openSide = false">
-            <div class="center">PAGE</div>
-          </v-ons-list-item>
-        </v-ons-list>
-      </v-ons-page>
+
+    <!-- Side Menu -->
+    <v-ons-splitter-side swipeable collapse width="250px"
+      :animation="$ons.platform.isAndroid() ? 'overlay' : 'reveal'"
+      :open.sync="menuIsOpen">
+      <MenuPage/>
     </v-ons-splitter-side>
 
+    <!-- Page Content -->
     <v-ons-splitter-content>
-      <!-- <component :is="currentPage" :toggle-menu="() => openSide = !openSide"></component> -->
       <router-view/>
     </v-ons-splitter-content>
-  </v-ons-splitter>
 
-  <!-- <router-view/> -->
+  </v-ons-splitter>
 </template>
 
 <script>
 import AppNavbar from './containers/app_navbar'
 import AppFooter from './containers/app_footer'
 import Notification from './containers/app_notification'
+import MenuPage from '@/components/Sidebar'
 
 export default {
   name: 'app',
@@ -37,7 +35,8 @@ export default {
   components: {
     AppNavbar,
     Notification,
-    AppFooter
+    AppFooter,
+    MenuPage
   },
 
   // Top-Level page Meta
@@ -48,15 +47,22 @@ export default {
       lang: 'en'
     }
   },
-
   data () {
     return {
-      currentPage: 'home',
-      pages: ['home', 'news', 'settings'],
-      openSide: false
+      opened: false
+    }
+  },
+  computed: {
+    menuIsOpen: {
+      get () {
+        return this.opened
+      },
+      set (newValue) {
+        this.opened = newValue
+        // this.$store.commit('splitter/toggle', newValue)
+      }
     }
   }
-
 }
 </script>
 
@@ -75,5 +81,8 @@ export default {
 
   #app {
     height: 100%;
+  }
+  ons-splitter-side[side=left][animation=overlay] {
+    border-right: 1px solid #BBB;
   }
 </style>
